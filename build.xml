@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<!-- Java RTP (JRTP) -->
+
+<project name="jrtp" default="all" basedir=".">
+	
+	<description> Java RTP (JRTP) build file </description>
+	
+	<!-- Global properties -->
+	<property name="root" location="."/>
+	<property name="javadoc" location="javadoc"/>
+	<property name="src" location="src"/>
+	<property name="classes" location="classes"/>
+	<property name="lib" location="lib"/>
+	<property name="www" location="www"/>
+	<property name="javac.nowarn" value="false" />
+	<property name="javac.debug" value="on" />
+	<property name="javac.deprecation" value="true" />
+	<property name="javac.optimize" value="on" />
+	<property name="javac.debuglevel" value="lines,var,source" />
+	
+	
+	<!-- Clean -->
+	<target name="clean" description="Clean up previous build">
+		
+		<delete dir="${classes}"/>
+		<delete dir="${javadoc}"/>
+		<delete file="${www}/jrtp_1.0a.zip"/>
+		<delete file="${www}/jrtp_1.0a.jar"/>
+			
+		<!-- Make new directories -->
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${javadoc}"/>
+		
+	</target>
+
+   
+	<!-- Compile -->
+	<target name="compile" depends="clean" description="compile the source" >
+		
+		<javac debug="${javac.debug}" 
+			debuglevel="${javac.debuglevel}" 
+			nowarn="${javac.nowarn}" 
+			deprecation="${javac.deprecation}" 
+			optimize="${javac.optimize}" 
+			srcdir="${src}" 
+			destdir="${classes}">
+			
+			<classpath>
+				<pathelement location="${lib}/junit-3.8.1.jar"/>
+			</classpath>
+			
+		</javac>
+		
+	</target>
+	
+	
+	<!-- Distribution -->
+	<target name="dist" depends="compile"
+			description="Generate the jar file distribution" >
+		
+		<jar jarfile="${www}/jrtp_1.0a.jar" basedir="${classes}"/>
+		
+		<zip destfile="${www}/jrtp_1.0a.zip"
+		       basedir="../jrtp"
+		/>
+		
+  	</target>
+	
+	
+	<!-- Javadoc -->
+	<target name="javadoc" depends="dist" description="generate javadocs">
+
+ 		<javadoc
+			packagenames="gov.nist.*"
+         	sourcepath="src"
+			destdir="${javadoc}"
+			author="National Institute of Standards and Technology."
+			version="true"
+			use="true"
+			windowtitle="Java RTP (JRTP) Javadoc">
+ 			
+         	<classpath>
+         		<pathelement location="${lib}/junit-3.8.1.jar"/>
+            	<pathelement path="${java.class.path}"/>
+         	</classpath>
+
+			<doctitle><![CDATA[<h1> Java RTP (JRTP) </h1>]]></doctitle>
+			<bottom><![CDATA[<i>National Institute of Standards and Technology</i>]]></bottom>
+		
+ 		</javadoc>
+    
+	</target> 
+	
+	<!-- Do All -->
+	<target name="all" depends="javadoc" description="generate javadocs">
+    
+	</target> 
+		
+		
+	<!-- Test application 1 of 2 -->
+	<target name="app1"  >
+		
+		<java
+			fork="true"
+			classname="gov.nist.jrtp.test.send_recv.TestApplication">
+			
+			<arg value="conf/app1.xml" />
+	
+			<classpath>
+				<pathelement location="${classes}"/>
+				<pathelement path="${java.class.path}"/>
+				
+			</classpath>
+			
+		</java>
+		
+	</target>
+
+	
+	<!-- Test application 2 of 2 -->
+	<target name="app2" >
+		
+		<java
+			fork="true"
+			classname="gov.nist.jrtp.test.send_recv.TestApplication">
+			
+			<arg value="conf/app2.xml" />
+	
+			<classpath>
+				<pathelement location="${classes}"/>
+				<pathelement path="${java.class.path}"/>
+				
+			</classpath>
+			
+		</java>
+		
+	</target>
+	
+	
+	<!-- RTP dump test.  This is used to test this RTP stack against
+	 	 the RTP tool "rtpdump" from Columbia University.  See
+	 	 http://www.cs.columbia.edu/IRT/software/rtptools/  -->
+	<target name="rtpdump" >
+		
+		<java
+			fork="true"
+			classname="gov.nist.jrtp.test.send_recv.TestApplication">
+			
+			<arg value="conf/rtpdump.xml" />
+	
+			<classpath>
+				<pathelement location="${classes}"/>
+				<pathelement path="${java.class.path}"/>
+				
+			</classpath>
+			
+		</java>
+		
+	</target>
+	
+	
+	<!-- RTP send test.  This is used to test this RTP stack against
+	 	 the RTP tool "rtpsend" from Columbia University.  See
+	 	 http://www.cs.columbia.edu/IRT/software/rtptools/  -->
+	<target name="rtpsend" >
+		<java
+			fork="true"
+			classname="gov.nist.jrtp.test.send_recv.TestApplication"
+		>
+			<arg value="conf/rtpsend.xml" />
+	
+			<classpath>
+				<pathelement location="${classes}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+
+</project>
+
